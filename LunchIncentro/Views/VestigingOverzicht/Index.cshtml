@@ -3,6 +3,18 @@
 @{
     ViewBag.Title = "SpecificVestiging";
 }
+<script type="text/javascript">
+    $(function () {
+        $('[data-paychoice]').hide();
+        $('#Select')
+            .change(function() {
+                var value = $(this).val();
+                $('#ChosenPayH3').text(value);
+                $('[data-paychoice]').hide();
+                $('[data-paychoice*="' + value + '"').show();
+            });
+    })
+</script>
 
 <h2>SpecificVestiging</h2>
 
@@ -14,22 +26,23 @@
 
 <div><img src="@Model.Vestiging.Image"/></div>
 
-@using (Html.BeginForm("Index", "VestigingOverzicht",new { vestigingID = Model.Vestiging.Id}, FormMethod.Get))
-{
-    <p>
-        Wat wil je doen ? : @Html.DropDownList("payChoice")
-        <input type="submit" value="Select" />
-    </p>
-}
+<p>
+    Wat wil je doen ? : @Html.DropDownList("payChoice", null, new {@id="Select"});
+</p>
 
-
-<div>Gekozen is: @ViewBag.ChosenPayChoice</div>
 <div class="paychoice">
     <div class="col-xs-4">
-        Direct uit saldo
     </div>
 
-    <div class="col-xs-4">Saldo opwaarderen</div>
+    <div class="col-xs-4">
+        <h3 id="ChosenPayH3"></h3>
+        <p data-paychoice="SaldoPay Increment">Huidig saldo: @Model.Balance.Balance</p>
+        <p data-paychoice="SaldoPay DirectPay">Te betalen: <input type="number" value="@Model.Vestiging.StandardCost" step="any" min="0" max="50" /></p>
+        <p data-paychoice="Increment ">Ophogen met: <input type="number" value="@Model.Vestiging.StandardCost" step="any" min="0" max="50" /></p>
+        <p data-paychoice="SaldoPay Increment ">Toekomstig saldo: </p>
+        <div data-paychoice="Increment DirectPay">Betaalkeuze</div>
+        <input type="button" value="Akkoord"/>
+    </div>
 
-    <div class="col-xs-4">Eenmalig betalen</div>
+    <div class="col-xs-4"></div>
 </div>

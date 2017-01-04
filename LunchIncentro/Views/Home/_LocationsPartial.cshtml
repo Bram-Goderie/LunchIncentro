@@ -17,7 +17,7 @@
             @{ var balanceState = item.Balance.Balance > 0.0f ? "positiveBalance" : (item.Balance.Balance < 0.0f ? "negativeBalance" : "neutralBalance"); }
             <h4 class="@balanceState">current balance: @item.Balance.Balance</h4>
             
-            @Html.ActionLink("Go to vestiging", "Index", "VestigingOverzicht", new { vestigingID = item.Vestiging.Id, payChoice = Enum.GetName(typeof(PayChoice), 0)}, null);
+            @Html.ActionLink("Go to vestiging", "Index", "VestigingOverzicht", new { vestigingID = item.Vestiging.Id}, null);
         </div>
     }
 </div>

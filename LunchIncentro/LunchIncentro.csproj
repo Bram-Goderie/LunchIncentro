@@ -271,7 +271,7 @@
     <Content Include="Views\Vestigings\Details.cshtml" />
     <Content Include="Views\Vestigings\Edit.cshtml" />
     <Content Include="Views\Vestigings\Index.cshtml" />
-    <Content Include="Views\Home\_payChoicePartial.cshtml" />
+    <Content Include="Views\VestigingOverzicht\_payChoicePartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
