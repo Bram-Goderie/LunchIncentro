@@ -1,0 +1,35 @@
+﻿@using LunchIncentro.Models
+@model VestigingOverzicht
+@{
+    ViewBag.Title = "SpecificVestiging";
+}
+
+<h2>SpecificVestiging</h2>
+
+<div>vestiging: @Model.Vestiging.Name</div>
+<div>user: @Model.Balance.User</div>
+<div>balance: @Model.Balance.Balance</div>
+<div>date: @Model.Balance.Date</div>
+<div>standardcost: @Model.Vestiging.StandardCost</div>
+
+<div><img src="@Model.Vestiging.Image"/></div>
+
+@using (Html.BeginForm("Index", "VestigingOverzicht",new { vestigingID = Model.Vestiging.Id}, FormMethod.Get))
+{
+    <p>
+        Wat wil je doen ? : @Html.DropDownList("payChoice")
+        <input type="submit" value="Select" />
+    </p>
+}
+
+
+<div>Gekozen is: @ViewBag.ChosenPayChoice</div>
+<div class="paychoice">
+    <div class="col-xs-4">
+        Direct uit saldo
+    </div>
+
+    <div class="col-xs-4">Saldo opwaarderen</div>
+
+    <div class="col-xs-4">Eenmalig betalen</div>
+</div>

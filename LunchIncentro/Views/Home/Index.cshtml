@@ -1,0 +1,42 @@
+﻿@using LunchIncentro.Controllers
+@using LunchIncentro.Models
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Lunch Incentro</h1>
+    <h2>Welcome @User.Identity.GetUserName() from @Model.</h2>
+    @*<p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>*@
+    
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
+        {
+            @Html.AntiForgeryToken()
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <p>Hello @User.Identity.GetUserName()</p>
+                </li>
+                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+            </ul>
+        }
+        <div class="row">
+            <section id="socialLoginForm">
+                @Html.Partial("_LocationsPartial", DependencyResolver.Current.GetService<VestigingsController>().GetVestigingenWithBalance(User.Identity.GetUserName()))
+            </section>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <section id="socialLoginForm">
+                    @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel {ReturnUrl = ViewBag.ReturnUrl})
+                </section>
+            </div>
+        </div>
+    }
+</div>
