@@ -14,6 +14,8 @@ namespace LunchIncentro.Controllers
     {
         public static PayChoice ChosenPayChoice = PayChoice.Nothing;
         private static string vestigingIdSaver = "";
+
+        private static VestigingOverzicht vestigingOverzicht;
         // GET: VestigingOverzicht
         public ActionResult Index(string vestigingID)
         {
@@ -21,9 +23,24 @@ namespace LunchIncentro.Controllers
             else vestigingID = vestigingIdSaver;
             var vestigingen = DependencyResolver.Current.GetService<VestigingsController>()
                 .GetVestigingenWithBalance(User.Identity.GetUserName());
-            var vestigingOverzicht = vestigingen.FirstOrDefault(v => v.Vestiging.Id.Equals(vestigingID));
+            vestigingOverzicht = vestigingen.FirstOrDefault(v => v.Vestiging.Id.Equals(vestigingID));
+            vestigingOverzicht.PayAmount = vestigingOverzicht.Vestiging.StandardCost;
             ViewBag.payChoice = new SelectList(Enum.GetNames(typeof(PayChoice)));
+            ViewBag.Possibility = new SelectList(Enum.GetNames(typeof(PayPossibilities)));
 
+            return View(vestigingOverzicht);
+        }
+
+        public ActionResult Payment(string Possibility, float PayAmount)
+        {
+            vestigingOverzicht.PayAmount = PayAmount;
+            vestigingOverzicht.Possibility = (PayPossibilities) Enum.Parse(typeof(PayPossibilities), Possibility);
+            return View(vestigingOverzicht);
+        }
+
+        public ActionResult Result(string PayResult)
+        {
+            vestigingOverzicht.PayResult = (PayResult)Enum.Parse(typeof(PayResult), PayResult);
             return View(vestigingOverzicht);
         }
     }

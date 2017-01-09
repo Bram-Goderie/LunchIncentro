@@ -7,7 +7,10 @@ namespace LunchIncentro.Models
     {
         public Vestiging Vestiging { get; set; }
         public BalanceModel Balance { get; set; }
-        public  PayChoice PayChoice { get; set; }
+        public PayChoice PayChoice { get; set; }
+        public PayPossibilities Possibility { get; set; }
+        public PayResult PayResult { get; set; }
+        public float PayAmount { get; set; }
 
         public VestigingOverzicht(Vestiging vestiging, BalanceModel balance)
         {

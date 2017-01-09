@@ -1,0 +1,26 @@
+﻿@using LunchIncentro.Models
+@model VestigingOverzicht
+@{
+    ViewBag.Title = "Result";
+}
+
+<h2>Result: @ViewBag.result</h2>
+
+<p>Paying with: @Model.Possibility   </p>
+<p>amount: @Model.PayAmount          </p>
+
+<p>for: @Model.Vestiging.Name        </p>
+<p>to: @Model.Vestiging.Bunq         </p>
+
+<p>from: @Model.Balance.User         </p>
+
+<p>
+    @if (Model.PayResult.Equals(PayResult.Succes))
+    {
+        <a href="~/home">Return back home</a>
+    }
+    else
+    {
+        <a href="Index">Retry</a>
+    }
+</p>

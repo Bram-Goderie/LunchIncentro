@@ -4,19 +4,59 @@
     ViewBag.Title = "SpecificVestiging";
 }
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         $('[data-paychoice]').hide();
+        $('#paypal-button').hide();
+        $('#akkoord-button').hide();
+        $('.code').hide();
         $('#Select')
             .change(function() {
+                $('.code').show();
                 var value = $(this).val();
                 $('#ChosenPayH3').text(value);
                 $('[data-paychoice]').hide();
                 $('[data-paychoice*="' + value + '"').show();
+                if ($('#payAmountBox').is(":visible")) {
+                    $('#payAmountBox').val(@Model.Vestiging.StandardCost);
+                    var future = @Model.Balance.Balance + @Model.Vestiging.StandardCost;
+                    $('#futureSaldo').text(future);
+                }
             });
-    })
+        $('#payAmountBox')
+            .change(function() {
+                var value = $(this).val();
+                var future = @Model.Balance.Balance + +value;
+                $('#futureSaldo').text(future);
+            });
+        $('#SelectPossibility')
+            .change(function() {
+                var value = $(this).val();
+                if (value === "PayPal") {
+                    $('#paypal-button').show();
+                    $('#akkoord-button').hide();
+                } else {
+                    $('#paypal-button').hide();
+                    $('#akkoord-button').show();
+                }
+            });
+    });
+</script>
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+    paypal.Button.render({
+        env: 'sandbox', // Specify 'sandbox' for the test environment, 'production' for live
+        payment: function() {
+            // Set up the payment here, when the buyer clicks on the button
+        },
+        onAuthorize: function(data, actions) {
+            // Execute the payment here, when the buyer approves the transaction
+       }
+    }, '#paypal-button');
 </script>
 
 <h2>SpecificVestiging</h2>
+
+<a href="~/Home">return home</a>
 
 <div>vestiging: @Model.Vestiging.Name</div>
 <div>user: @Model.Balance.User</div>
@@ -26,23 +66,35 @@
 
 <div><img src="@Model.Vestiging.Image"/></div>
 
-<p>
-    Wat wil je doen ? : @Html.DropDownList("payChoice", null, new {@id="Select"});
-</p>
 
-<div class="paychoice">
+@using (Html.BeginForm("Payment", "VestigingOverzicht", FormMethod.Post))
+{
     <div class="col-xs-4">
     </div>
 
     <div class="col-xs-4">
-        <h3 id="ChosenPayH3"></h3>
-        <p data-paychoice="SaldoPay Increment">Huidig saldo: @Model.Balance.Balance</p>
-        <p data-paychoice="SaldoPay DirectPay">Te betalen: <input type="number" value="@Model.Vestiging.StandardCost" step="any" min="0" max="50" /></p>
-        <p data-paychoice="Increment ">Ophogen met: <input type="number" value="@Model.Vestiging.StandardCost" step="any" min="0" max="50" /></p>
-        <p data-paychoice="SaldoPay Increment ">Toekomstig saldo: </p>
-        <div data-paychoice="Increment DirectPay">Betaalkeuze</div>
-        <input type="button" value="Akkoord"/>
+        <p>
+            Wat wil je doen ? : @Html.DropDownListFor(m => m.PayChoice, null, new { @id = "Select" });
+        </p>
+        <div class="code">
+            <h3 id="ChosenPayH3"></h3>
+            <p data-paychoice="SaldoPay Increment">Huidig saldo: €@Model.Balance.Balance</p>
+            <p data-paychoice="SaldoPay DirectPay">
+                Te betalen: €
+            </p>
+            <p data-paychoice="Increment ">
+                Ophogen met: €
+            </p>
+            @Html.TextBoxFor(m => m.PayAmount, null, new
+            {
+                id = "payAmountBox", type = "number", step = "any", min = "0", max = "50"
+            })
+            <p data-paychoice="SaldoPay Increment ">Toekomstig saldo: €<span id="futureSaldo"></span> </p>
+            <div data-paychoice="Increment DirectPay">Betaalkeuze @Html.DropDownListFor(m => m.Possibility, null, new { @id = "SelectPossibility" })</div>
+            <div id="paypal-button"></div>
+            <input id="akkoord-button" type="submit" value="Akkoord" />
+        </div>
     </div>
 
     <div class="col-xs-4"></div>
-</div>
+}

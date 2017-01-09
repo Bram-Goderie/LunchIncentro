@@ -1,0 +1,24 @@
+﻿@using LunchIncentro.Models
+@model VestigingOverzicht
+@{
+    ViewBag.Title = "Payment";
+}
+
+<h2>Payment</h2>
+
+<p>Paying with: @Model.Possibility  </p>
+<p>amount: @Model.PayAmount         </p>
+
+<p>for: @Model.Vestiging.Name       </p>
+<p>to: @Model.Vestiging.Bunq        </p>
+
+<p>from: @Model.Balance.User        </p>
+
+@using (Html.BeginForm("Result", "VestigingOverzicht", FormMethod.Post))
+{
+    @Html.RadioButtonFor(m => m.PayResult, PayResult.Succes);
+    <span>succes</span>
+    @Html.RadioButtonFor(m => m.PayResult, PayResult.Failure);
+    <span>failure</span>
+    <input type="submit" value="submit"/>
+}

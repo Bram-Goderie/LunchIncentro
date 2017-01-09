@@ -43,6 +43,14 @@ namespace LunchIncentro.Models
         SaldoPay
     }
 
+    public enum PayPossibilities
+    {
+        Nothing,
+        PayPal,
+        Ideal,
+        Contant
+    }
+
     public enum PayResult
     {
         Succes,
