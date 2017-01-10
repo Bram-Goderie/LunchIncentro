@@ -136,5 +136,31 @@ namespace LunchIncentro.Controllers
         {
             return db.Balances.Find(id);
         }
+
+        public void UpdateBalance(BalanceModel balance, float amount)
+        {
+            balance.Balance += amount;
+            balance.Date = DateTime.Now;
+            if (int.Parse(balance.Id) < 0)
+            {
+                balance.Id = FindNewId();
+                db.Balances.Add(balance);
+            }
+            else
+            {
+                db.Entry(balance).State = EntityState.Modified;
+            }
+            db.SaveChanges();
+        }
+
+        private string FindNewId()
+        {
+            var idToFind = 0;
+            while (db.Balances.Find("" + idToFind) != null)
+            {
+                idToFind++;
+            }
+            return "" + idToFind;
+        }
     }
 }

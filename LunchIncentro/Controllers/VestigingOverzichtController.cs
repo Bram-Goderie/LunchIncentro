@@ -31,16 +31,22 @@ namespace LunchIncentro.Controllers
             return View(vestigingOverzicht);
         }
 
-        public ActionResult Payment(string Possibility, float PayAmount)
+        public ActionResult Payment(string Possibility, float PayAmount, PayChoice payChoice)
         {
-            vestigingOverzicht.PayAmount = PayAmount;
-            vestigingOverzicht.Possibility = (PayPossibilities) Enum.Parse(typeof(PayPossibilities), Possibility);
+            vestigingOverzicht.PayChoice = payChoice;
+            vestigingOverzicht.Possibility = (PayPossibilities)Enum.Parse(typeof(PayPossibilities), Possibility);
+            vestigingOverzicht.PayAmount = PayAmount * (vestigingOverzicht.PayChoice.Equals(PayChoice.SaldoPay) ? -1 : 1);
             return View(vestigingOverzicht);
         }
 
-        public ActionResult Result(string PayResult)
+        public ActionResult Result(string payResult)
         {
-            vestigingOverzicht.PayResult = (PayResult)Enum.Parse(typeof(PayResult), PayResult);
+            vestigingOverzicht.PayResult = (PayResult)Enum.Parse(typeof(PayResult), payResult);
+            if (vestigingOverzicht.PayResult.Equals(PayResult.Succes))
+            {
+                DependencyResolver.Current.GetService<MutationsController>()
+                    .NewMutation(vestigingOverzicht);
+            }
             return View(vestigingOverzicht);
         }
     }

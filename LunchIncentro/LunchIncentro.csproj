@@ -191,11 +191,15 @@
     <Compile Include="Migrations\201612201451057_Init2.Designer.cs">
       <DependentUpon>201612201451057_Init2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701101204068_Init3.cs" />
+    <Compile Include="Migrations\201701101204068_Init3.Designer.cs">
+      <DependentUpon>201701101204068_Init3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BalanceModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\MutationModel.cs" />
+    <Compile Include="Models\Mutation.cs" />
     <Compile Include="Models\PayChoiceModel.cs" />
     <Compile Include="Models\VestigingModel.cs" />
     <Compile Include="Models\VestigingOverzicht.cs" />
@@ -260,11 +264,6 @@
     <Content Include="Views\Balance\Details.cshtml" />
     <Content Include="Views\Balance\Edit.cshtml" />
     <Content Include="Views\Balance\Index.cshtml" />
-    <Content Include="Views\Mutations\Create.cshtml" />
-    <Content Include="Views\Mutations\Delete.cshtml" />
-    <Content Include="Views\Mutations\Details.cshtml" />
-    <Content Include="Views\Mutations\Edit.cshtml" />
-    <Content Include="Views\Mutations\Index.cshtml" />
     <Content Include="Views\VestigingOverzicht\Index.cshtml" />
     <Content Include="Views\Vestigings\Create.cshtml" />
     <Content Include="Views\Vestigings\Delete.cshtml" />
@@ -275,6 +274,11 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\VestigingOverzicht\Payment.cshtml" />
     <Content Include="Views\VestigingOverzicht\Result.cshtml" />
+    <Content Include="Views\Mutations\Create.cshtml" />
+    <Content Include="Views\Mutations\Delete.cshtml" />
+    <Content Include="Views\Mutations\Details.cshtml" />
+    <Content Include="Views\Mutations\Edit.cshtml" />
+    <Content Include="Views\Mutations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -295,6 +299,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612201451057_Init2.resx">
       <DependentUpon>201612201451057_Init2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701101204068_Init3.resx">
+      <DependentUpon>201701101204068_Init3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

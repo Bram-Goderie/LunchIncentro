@@ -12,7 +12,7 @@ namespace LunchIncentro.Controllers
 {
     public class MutationsController : Controller
     {
-        private MutationDbContext db = new MutationDbContext();
+        private MutationsDbContext db = new MutationsDbContext();
 
         // GET: Mutations
         public ActionResult Index()
@@ -27,12 +27,12 @@ namespace LunchIncentro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MutationModel mutationModel = db.Mutations.Find(id);
-            if (mutationModel == null)
+            Mutation mutation = db.Mutations.Find(id);
+            if (mutation == null)
             {
                 return HttpNotFound();
             }
-            return View(mutationModel);
+            return View(mutation);
         }
 
         // GET: Mutations/Create
@@ -46,16 +46,16 @@ namespace LunchIncentro.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,User,Vestiging,Mutation,DateTime")] MutationModel mutationModel)
+        public ActionResult Create([Bind(Include = "Id,User,Vestiging,Amount,Balance,DateTime,PayPossibility,PayChoice")] Mutation mutation)
         {
             if (ModelState.IsValid)
             {
-                db.Mutations.Add(mutationModel);
+                db.Mutations.Add(mutation);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(mutationModel);
+            return View(mutation);
         }
 
         // GET: Mutations/Edit/5
@@ -65,12 +65,12 @@ namespace LunchIncentro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MutationModel mutationModel = db.Mutations.Find(id);
-            if (mutationModel == null)
+            Mutation mutation = db.Mutations.Find(id);
+            if (mutation == null)
             {
                 return HttpNotFound();
             }
-            return View(mutationModel);
+            return View(mutation);
         }
 
         // POST: Mutations/Edit/5
@@ -78,15 +78,15 @@ namespace LunchIncentro.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,User,Vestiging,Mutation,DateTime")] MutationModel mutationModel)
+        public ActionResult Edit([Bind(Include = "Id,User,Vestiging,Amount,Balance,DateTime,PayPossibility,PayChoice")] Mutation mutation)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(mutationModel).State = EntityState.Modified;
+                db.Entry(mutation).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(mutationModel);
+            return View(mutation);
         }
 
         // GET: Mutations/Delete/5
@@ -96,12 +96,12 @@ namespace LunchIncentro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MutationModel mutationModel = db.Mutations.Find(id);
-            if (mutationModel == null)
+            Mutation mutation = db.Mutations.Find(id);
+            if (mutation == null)
             {
                 return HttpNotFound();
             }
-            return View(mutationModel);
+            return View(mutation);
         }
 
         // POST: Mutations/Delete/5
@@ -109,8 +109,8 @@ namespace LunchIncentro.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            MutationModel mutationModel = db.Mutations.Find(id);
-            db.Mutations.Remove(mutationModel);
+            Mutation mutation = db.Mutations.Find(id);
+            db.Mutations.Remove(mutation);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -122,6 +122,40 @@ namespace LunchIncentro.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public void NewMutation(VestigingOverzicht vestigingOverzicht)
+        {
+            var mutation = new Mutation
+            {
+                Id = FindNewId(),
+                DateTime = DateTime.Now,
+                Vestiging = vestigingOverzicht.Vestiging.Id,
+                Amount = vestigingOverzicht.PayAmount,
+                Balance = vestigingOverzicht.Balance.Balance,
+                User = vestigingOverzicht.Balance.User,
+                PayChoice = vestigingOverzicht.PayChoice,
+                PayPossibility = vestigingOverzicht.Possibility
+            };
+
+            if (!vestigingOverzicht.PayChoice.Equals(PayChoice.DirectPay))
+            {
+                DependencyResolver.Current.GetService<BalanceController>()
+                    .UpdateBalance(vestigingOverzicht.Balance, vestigingOverzicht.PayAmount);
+            }
+
+            db.Mutations.Add(mutation);
+            db.SaveChanges();
+        }
+
+        private string FindNewId()
+        {
+            var idToFind = 0;
+            while (db.Mutations.Find("" + idToFind) != null)
+            {
+                idToFind++;
+            }
+            return "" + idToFind;
         }
     }
 }

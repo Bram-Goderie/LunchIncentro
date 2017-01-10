@@ -19,11 +19,12 @@ namespace LunchIncentro.Models
 
         public BalanceModel() { }
 
-        public BalanceModel(float balance, string vestigingId)
+        public BalanceModel(float balance, string vestigingId, string user)
         {
             Id = "-1";
             Vestiging = vestigingId;
             Balance = balance;
+            User = user;
             Date = DateTime.Now;
         }
     }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LunchIncentro.Models.MutationModel>
+﻿@model IEnumerable<LunchIncentro.Models.Mutation>
 
 @{
     ViewBag.Title = "Index";
@@ -18,10 +18,19 @@
             @Html.DisplayNameFor(model => model.Vestiging)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Mutation)
+            @Html.DisplayNameFor(model => model.Amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Balance)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PayPossibility)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PayChoice)
         </th>
         <th></th>
     </tr>
@@ -35,10 +44,19 @@
             @Html.DisplayFor(modelItem => item.Vestiging)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Mutation)
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Balance)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DateTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PayPossibility)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PayChoice)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

@@ -138,7 +138,7 @@ namespace LunchIncentro.Controllers
             {
 
                 var control = DependencyResolver.Current.GetService<BalanceController>();
-                var balance = control.GetBalance(vestiging, username) ?? new BalanceModel(0.0f, vestiging.Id);//find the balance for user and vestiging.
+                var balance = control.GetBalance(vestiging, username) ?? new BalanceModel(0.0f, vestiging.Id, username);//find the balance for user and vestiging.
                 vestigingWithBalances.Add(new VestigingOverzicht(vestiging, balance));
             }
             return vestigingWithBalances;
