@@ -69,27 +69,112 @@ namespace LunchIncentro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            model.Vestigingen = GetVestigingen();
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
+            model.Name =
+                DependencyResolver.Current.GetService<VestigingsController>().GetVestigingById(model.Vestiging.Id).Name;
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
+        }//
+        // GET: /Account/Register
+        [AllowAnonymous]
+        public ActionResult Register()
+        {
+            var model = new RegisterViewModel {Vestigingen = GetVestigingen()};
+            return View(model);
+        }
+
+        //
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            model.Vestigingen = GetVestigingen();
+            if (ModelState.IsValid)
+            {
+                model.Name =
+                    DependencyResolver.Current.GetService<VestigingsController>().GetVestigingById(model.Vestiging.Id).Name;
+                var user = new ApplicationUser { UserName = model.Name, Email = model.Name.Replace(" ", String.Empty)+"@incentro.com", Vestiging = model.Vestiging.Id };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        //
+        // GET: /Account/ResetPassword
+        [AllowAnonymous]
+        public ActionResult ResetPassword(string code)
+        {
+            ViewBag.Vestigingen = GetVestigingen();
+            return code == null ? View("Error") : View();
+        }
+
+        //
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            model.Name =
+                DependencyResolver.Current.GetService<VestigingsController>().GetVestigingById(model.Vestiging.Id).Name;
+            var user = await UserManager.FindByNameAsync(model.Name);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return RedirectToAction("ResetPasswordConfirmation", "Account");
+            }
+            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("ResetPasswordConfirmation", "Account");
+            }
+            AddErrors(result);
+            return View();
+        }
+
+        //
+        // GET: /Account/ResetPasswordConfirmation
+        [AllowAnonymous]
+        public ActionResult ResetPasswordConfirmation()
+        {
+            return View();
         }
 
         public Vestiging GetUserVestiging(string name)
@@ -142,11 +227,19 @@ namespace LunchIncentro.Controllers
         }
 
         //
+        // GET: /Account/ResetPassword
+        [AllowAnonymous]
+        public ActionResult ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model)
+        {
+            return View(model);
+        }
+
+        //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl, FormCollection fc)
         {
             if (ModelState.IsValid)
             {
@@ -156,8 +249,7 @@ namespace LunchIncentro.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var control = DependencyResolver.Current.GetService<VestigingsController>();
-                model.Vestigingen = control.VestigingSelectList();
+                model.Vestigingen = GetVestigingen();
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Vestiging = model.Vestiging.Id};
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -174,6 +266,12 @@ namespace LunchIncentro.Controllers
 
             ViewBag.ReturnUrl = returnUrl;
             return View(model);
+        }
+
+        private IEnumerable<SelectListItem> GetVestigingen()
+        {
+            var control = DependencyResolver.Current.GetService<VestigingsController>();
+            return control.VestigingSelectList();
         }
 
         //

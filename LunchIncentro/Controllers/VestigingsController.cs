@@ -158,5 +158,12 @@ namespace LunchIncentro.Controllers
         {
             return db.Vestigingen.Find(vestigingId);
         }
+
+        public VestigingOverview GetVestigingOverview(string vestigingName)
+        {
+            VestigingOverview vestigingOverview = new VestigingOverview();
+            vestigingOverview.Balances =
+                DependencyResolver.Current.GetService<BalanceController>().GetBalancesByVestigingId(vestigingName);
+        }
     }
 }

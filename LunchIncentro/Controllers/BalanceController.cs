@@ -162,5 +162,10 @@ namespace LunchIncentro.Controllers
             }
             return "" + idToFind;
         }
+
+        public List<BalanceModel> GetBalancesByVestigingId(string vestigingId)
+        {
+            return db.Balances.Where(b => b.Vestiging.Equals(vestigingId)).ToList();
+        }
     }
 }
