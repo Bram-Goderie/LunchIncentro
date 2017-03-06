@@ -158,12 +158,21 @@ namespace LunchIncentro.Controllers
         {
             return db.Vestigingen.Find(vestigingId);
         }
+        public Vestiging GetVestigingByName(string vestigingName)
+        {
+            return Enumerable.FirstOrDefault(db.Vestigingen, vestiging => vestiging.Name.Equals(vestigingName));
+        }
 
         public VestigingOverview GetVestigingOverview(string vestigingName)
         {
-            VestigingOverview vestigingOverview = new VestigingOverview();
-            vestigingOverview.Balances =
-                DependencyResolver.Current.GetService<BalanceController>().GetBalancesByVestigingId(vestigingName);
+
+            Vestiging vestiging = GetVestigingByName(vestigingName);
+            var vestigingOverview = new VestigingOverview
+            {
+                Balances =
+                    DependencyResolver.Current.GetService<BalanceController>().GetBalancesByVestigingId(vestiging.Id)
+            };
+            return vestigingOverview;
         }
     }
 }

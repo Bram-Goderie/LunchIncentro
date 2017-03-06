@@ -1,7 +1,47 @@
-﻿@model LunchIncentro.Models.VestigingOverview
+﻿@using LunchIncentro.Models
+@model LunchIncentro.Models.VestigingOverview
 @{
     ViewBag.Title = "_LocationOverviewPartial";
 }
+<div>
+    <h3>Balances</h3>
+    <table class="table">
+        <tr>
+            @for (var i = 0; i < 1; i++)
+            {
+                var first = @Model.Balances[i];
+                <th>
+                    @Html.DisplayNameFor(a => first.User)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(a => first.Balance)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(a => first.Date)
+                </th>
+                <th></th>
+            }
+        </tr>
 
-<h2>_LocationOverviewPartial</h2>
+        @foreach (var item in @Model.Balances)
+        {
+            var itemhref = "" + item.User;
+            <tr>
+                <td>
+                    <a href=@itemhref></a>
+                    @Html.DisplayFor(modelItem => item.User)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Balance)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Balance", new { id = item.Id }, null) 
+                </td>
+            </tr>
+        }
 
+    </table>
+</div>

@@ -12,12 +12,12 @@
     @foreach (var item in Model)
     {
         <div class="Vestiging-grid col-md-5ths col-xs-4">
-            <img src="@item.Vestiging.Image" width="250" height="250"/>
-            <h3>@item.Vestiging.Name</h3>
-            @{ var balanceState = item.Balance.Balance > 0.0f ? "positiveBalance" : (item.Balance.Balance < 0.0f ? "negativeBalance" : "neutralBalance"); }
-            <h4 class="@balanceState">current balance: @item.Balance.Balance</h4>
-            
-            @Html.ActionLink("Go to vestiging", "Index", "VestigingOverzicht", new { vestigingID = item.Vestiging.Id}, null);
+            <a href="@Url.Action("Index", "VestigingOverzicht", new {vestigingID = item.Vestiging.Id}, null)">
+                <img src="@item.Vestiging.Image" width="250" height="250" />
+                <h3>@item.Vestiging.Name</h3>
+                @{ var balanceState = item.Balance.Balance > 0.0f ? "positiveBalance" : (item.Balance.Balance < 0.0f ? "negativeBalance" : "neutralBalance"); }
+                <h4 class="@balanceState">current balance: @item.Balance.Balance</h4>
+            </a>
         </div>
     }
 </div>
